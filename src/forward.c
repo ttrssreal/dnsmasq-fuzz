@@ -1517,7 +1517,11 @@ void receive_query(struct listener *listen, time_t now)
   msg.msg_iov = iov;
   msg.msg_iovlen = 1;
   
+#ifdef FUZZING_BUILD_MODE_UNSAFE_FOR_PRODUCTION
+  if ((n = fuzz_recvmsg(&msg)) == -1)
+#else
   if ((n = recvmsg(listen->fd, &msg, 0)) == -1)
+#endif
     return;
   
   if (n < (int)sizeof(struct dns_header) || 

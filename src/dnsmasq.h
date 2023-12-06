@@ -1325,6 +1325,11 @@ struct server_details {
   u16 *flags;
 };
 
+#ifdef FUZZING_BUILD_MODE_UNSAFE_FOR_PRODUCTION
+int dnsmasq_main (int argc, char **argv);
+ssize_t fuzz_recvmsg(struct msghdr *msg);
+#endif
+
 /* cache.c */
 void cache_init(void);
 unsigned short rrtype(char *in);

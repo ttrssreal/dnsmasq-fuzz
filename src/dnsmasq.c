@@ -39,7 +39,12 @@ static int read_event(int fd, struct event_desc *evp, char **msg);
 static void poll_resolv(int force, int do_reload, time_t now);
 static void tcp_init(void);
 
+#ifdef FUZZING_BUILD_MODE_UNSAFE_FOR_PRODUCTION
+/* we can call this later */
+int dnsmasq_main (int argc, char **argv)
+#else
 int main (int argc, char **argv)
+#endif
 {
   time_t now;
   struct sigaction sigact;
@@ -104,6 +109,11 @@ int main (int argc, char **argv)
   rand_init(); /* Must precede read_opts() */
   
   read_opts(argc, argv, compile_opts);
+
+#ifdef FUZZING_BUILD_MODE_UNSAFE_FOR_PRODUCTION
+  /* Enable debug mode (stops forking etc) */
+  set_option_bool(OPT_DEBUG);
+#endif
  
 #ifdef HAVE_LINUX_NETWORK
   daemon->kernel_version = kernel_version();
@@ -399,8 +409,10 @@ int main (int argc, char **argv)
 	die(_("failed to set SO_BINDTODEVICE on DHCP socket: %s"), NULL, EC_BADNET);	
 #endif
     }
+#ifndef FUZZING_BUILD_MODE_UNSAFE_FOR_PRODUCTION
   else 
     create_wildcard_listeners();
+#endif
  
 #ifdef HAVE_DHCP6
   /* after enumerate_interfaces() */
@@ -1062,6 +1074,11 @@ int main (int argc, char **argv)
 #ifdef HAVE_INOTIFY
   /* Using inotify, have to select a resolv file at startup */
   poll_resolv(1, 0, now);
+#endif
+
+#ifdef FUZZING_BUILD_MODE_UNSAFE_FOR_PRODUCTION
+  /* probably enough initialization */
+  return 0;
 #endif
   
   while (1)
