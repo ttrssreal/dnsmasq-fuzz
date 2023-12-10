@@ -1,7 +1,7 @@
 #!/bin/bash
 
-if [ $(nproc) -lt 8 ]; then
-    echo "nproc < 8"
+if [ $(nproc) -lt 4 ]; then
+    echo "nproc < 4"
     exit 1
 fi
 
@@ -35,6 +35,11 @@ tmux split-window -h -t afl-cmplog: afl-fuzz -i in -o /fuzz/mnt/ \
     -c ./dnsmasq-fuzz-cmplog \
     -l 2AT \
     ./dnsmasq-fuzz-normal
+
+if [ $(nproc) -lt 8 ]; then
+    echo "started 4 fuzzers"
+    sleep infinity
+fi
 
 export AFL_DISABLE_TRIM=1
 
