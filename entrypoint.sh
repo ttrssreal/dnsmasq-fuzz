@@ -63,8 +63,7 @@ tmux split-window -v -t afl-normal: afl-fuzz -i in -o /fuzz/mnt/ \
 
 if [ $(nproc) -lt 9 ]; then
     echo "started 8 fuzzers"
-    tmux a
-    exit 1
+    sleep infinity
 fi
 
 tmux new -d -s afl-msan -- afl-fuzz -i in -o /fuzz/mnt/ \
@@ -75,8 +74,7 @@ tmux new -d -s afl-msan -- afl-fuzz -i in -o /fuzz/mnt/ \
 
 if [ $(nproc) -lt 10 ]; then
     echo "started 9 fuzzers"
-    tmux a
-    exit 1
+    sleep infinity
 fi
 
 # no worky
@@ -93,8 +91,7 @@ tmux new -d -s afl-cmplog-2 -- afl-fuzz -i in -o /fuzz/mnt/ \
 
 if [ $(nproc) -lt 11 ]; then
     echo "started 10 fuzzers"
-    tmux a
-    exit 1
+    sleep infinity
 fi
 
 tmux split-window -h -t afl-normal: afl-fuzz -i in -o /fuzz/mnt/ \
@@ -105,8 +102,7 @@ tmux split-window -h -t afl-normal: afl-fuzz -i in -o /fuzz/mnt/ \
 
 if [ $(nproc) -lt 12 ]; then
     echo "started 11 fuzzers"
-    tmux a
-    exit 1
+    sleep infinity
 fi
 
 tmux split-window -h -t afl-normal: afl-fuzz -i in -o /fuzz/mnt/ \
@@ -118,4 +114,4 @@ tmux split-window -h -t afl-normal: afl-fuzz -i in -o /fuzz/mnt/ \
 
 echo "started 12 fuzzers"
 
-tmux a
+sleep infinity
